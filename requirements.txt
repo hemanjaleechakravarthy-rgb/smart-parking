@@ -1,0 +1,7 @@
+pytest
+hypothesis
+pytest-cov
+mypy
+ruff
+matplotlib
+streamlit

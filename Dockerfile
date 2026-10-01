@@ -2,10 +2,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY . .
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir pytest hypothesis pytest-cov mypy ruff matplotlib
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
 
 ENV PYTHONPATH=/app
 
-CMD ["python", "main.py"]
+CMD ["streamlit", "run", "streamlit_app.py", "--server.address=0.0.0.0"]
