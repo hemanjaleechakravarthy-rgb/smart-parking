@@ -31,3 +31,14 @@ def test_parking_observer_base_update() -> None:
     observer.update("Test parking event")
 
     assert isinstance(observer, ParkingObserver)
+
+
+def test_parking_observer_base_method() -> None:
+    from app.services.parking_observer import ParkingObserver
+
+    class ConcreteObserver(ParkingObserver):
+        def update(self, message: str) -> None:
+            super().update(message)
+
+    observer = ConcreteObserver()
+    observer.update("Test parking event")

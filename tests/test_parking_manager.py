@@ -79,3 +79,19 @@ def test_strategy_allocation() -> None:
     result = manager.allocate_with_strategy(1)
 
     assert [slot.slot_id for slot in result] == ["P02"]
+
+
+def test_manager_priority_queue_allocation() -> None:
+    lot = ParkingLot()
+
+    lot.add_slot(ParkingSlot("P01", 30.0))
+    lot.add_slot(ParkingSlot("P02", 10.0))
+    lot.add_slot(ParkingSlot("P03", 20.0))
+
+    manager = ParkingManager(lot)
+
+    result = manager.allocate_with_priority_queue()
+
+    assert result is not None
+    assert result.slot_id == "P02"
+    assert result.distance_from_entrance == 10.0

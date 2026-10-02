@@ -7,12 +7,14 @@ from app.models.parking_lot import ParkingLot
 from app.models.parking_slot import ParkingSlot
 from app.models.vehicle import Vehicle
 from app.services.parking_strategy import ParkingStrategy
+from app.utils.priority_queue import ParkingPriorityQueue
 
 
 class ParkingManager:
     def __init__(self, parking_lot: ParkingLot) -> None:
         self.parking_lot = parking_lot
         self.strategy: ParkingStrategy | None = None
+        self.priority_queue = ParkingPriorityQueue()
 
     def set_strategy(self, strategy: ParkingStrategy) -> None:
         self.strategy = strategy
@@ -28,6 +30,14 @@ class ParkingManager:
             self.parking_lot.slots,
             required_slots,
         )
+
+    def allocate_with_priority_queue(self) -> ParkingSlot | None:
+        self.priority_queue = ParkingPriorityQueue()
+
+        for slot in self.parking_lot.available_slots():
+            self.priority_queue.add(slot)
+
+        return self.priority_queue.get_nearest()
 
     def allocate_greedy(
         self,
