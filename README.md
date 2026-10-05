@@ -78,7 +78,7 @@ It demonstrates multiple algorithmic approaches to the same parking allocation p
 
 - Property-based testing with Hypothesis
 
-- 100% code coverage
+- 94% code coverage
 
 - Static type checking with mypy
 

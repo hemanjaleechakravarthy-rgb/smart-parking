@@ -43,10 +43,25 @@ class ParkingManager:
         self,
         vehicle: Vehicle,
     ) -> ParkingSlot | None:
-        return greedy_allocate(self.parking_lot, vehicle)
+        result = greedy_allocate(
+            self.parking_lot,
+            vehicle,
+        )
+
+        if isinstance(result, list):
+            return result[0] if result else None
+
+        return result
 
     def allocate_nearest(self) -> ParkingSlot | None:
-        return find_nearest_slot(self.parking_lot.slots)
+        result = find_nearest_slot(
+            self.parking_lot.slots,
+        )
+
+        if isinstance(result, list):
+            return result[0] if result else None
+
+        return result
 
     def allocate_dynamic(
         self,
