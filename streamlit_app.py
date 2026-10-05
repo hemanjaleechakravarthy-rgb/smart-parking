@@ -1,4 +1,5 @@
 import csv
+
 import streamlit as st
 
 from app.algorithms.backtracking import backtracking_allocate
@@ -9,6 +10,11 @@ from app.algorithms.greedy import greedy_allocate
 from app.models.parking_lot import ParkingLot
 from app.models.parking_slot import ParkingSlot
 from app.models.vehicle import Vehicle
+
+
+# =========================================================
+# CREATE PARKING LOT
+# =========================================================
 
 
 def create_lot() -> ParkingLot:
@@ -77,6 +83,11 @@ def create_lot() -> ParkingLot:
     return lot
 
 
+# =========================================================
+# RUN SELECTED ALGORITHM
+# =========================================================
+
+
 def run_algorithm(
     algorithm: str,
     lot: ParkingLot,
@@ -85,9 +96,7 @@ def run_algorithm(
     ev_charging_required: bool,
 ):
     """
-    Run the selected parking algorithm for ONE vehicle.
-
-    The existing algorithms are kept unchanged.
+    Run the selected parking algorithm for one vehicle.
     """
 
     if algorithm == "Greedy":
@@ -160,22 +169,333 @@ def run_algorithm(
     return None
 
 
+# =========================================================
+# STREAMLIT CONFIGURATION
+# =========================================================
+
 st.set_page_config(
     page_title="Smart Parking",
     page_icon="🚗",
     layout="wide",
 )
 
-st.title("🚗 Smart Parking Space Management System")
+
+# =========================================================
+# SMART PARKING UI STYLING
+# =========================================================
+
+st.markdown(
+    """
+    <style>
+
+    /* =====================================================
+       GLOBAL APPLICATION
+       ===================================================== */
+
+    .stApp {
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(37, 99, 235, 0.16),
+                transparent 35%
+            ),
+            linear-gradient(
+                135deg,
+                #07111f 0%,
+                #0b1728 50%,
+                #0f1d31 100%
+            );
+    }
+
+    .block-container {
+        max-width: 1400px;
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+    }
+
+
+    /* =====================================================
+       STREAMLIT HEADER
+       ===================================================== */
+
+    header[data-testid="stHeader"] {
+        background: rgba(7, 17, 31, 0.96) !important;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+
+    /* =====================================================
+       GLOBAL TEXT
+       ===================================================== */
+
+    .stMarkdown,
+    .stMarkdown p,
+    .stMarkdown span,
+    .stMarkdown div {
+        color: #e5e7eb;
+    }
+
+    label,
+    [data-testid="stWidgetLabel"],
+    [data-testid="stWidgetLabel"] p {
+        color: #cbd5e1 !important;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        color: #f8fafc !important;
+    }
+
+
+    /* =====================================================
+       MAIN TITLE
+       ===================================================== */
+
+    .main-title {
+        font-size: 44px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #f8fafc !important;
+        margin-bottom: 2px;
+    }
+
+    .main-subtitle {
+        font-size: 17px;
+        color: #94a3b8 !important;
+        margin-bottom: 16px;
+    }
+
+    .system-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 14px;
+        border-radius: 20px;
+        background: rgba(34, 197, 94, 0.10);
+        border: 1px solid rgba(34, 197, 94, 0.35);
+        color: #86efac !important;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #22c55e;
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+    }
+
+
+    /* =====================================================
+       METRICS
+       ===================================================== */
+
+    [data-testid="stMetricLabel"] {
+        color: #94a3b8 !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        color: #f8fafc !important;
+        font-weight: 800;
+    }
+
+    [data-testid="stMetricDelta"] {
+        color: #94a3b8 !important;
+    }
+
+
+    /* =====================================================
+       SIDEBAR
+       ===================================================== */
+
+    section[data-testid="stSidebar"] {
+        background:
+            linear-gradient(
+                180deg,
+                #070e1b 0%,
+                #0b1424 100%
+            );
+        border-right: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    section[data-testid="stSidebar"] * {
+        color: #e5e7eb;
+    }
+
+
+    /* =====================================================
+       DROPDOWN / SELECTBOX VISIBILITY
+       ===================================================== */
+
+    section[data-testid="stSidebar"] div[data-baseweb="select"] {
+        color: #111827 !important;
+    }
+
+    section[data-testid="stSidebar"]
+    div[data-baseweb="select"] > div {
+        background-color: #f8fafc !important;
+        color: #111827 !important;
+        border-radius: 8px !important;
+    }
+
+    section[data-testid="stSidebar"]
+    div[data-baseweb="select"] span {
+        color: #111827 !important;
+    }
+
+    section[data-testid="stSidebar"]
+    div[data-baseweb="select"] input {
+        color: #111827 !important;
+    }
+
+    div[data-baseweb="popover"] {
+        background-color: #f8fafc !important;
+    }
+
+    div[data-baseweb="popover"] li {
+        color: #111827 !important;
+    }
+
+    div[data-baseweb="popover"] li:hover {
+        background-color: #e5e7eb !important;
+    }
+
+
+    /* =====================================================
+       TEXT INPUT VISIBILITY
+       ===================================================== */
+
+    input,
+    textarea {
+        color: #111827 !important;
+        background-color: #f8fafc !important;
+    }
+
+    section[data-testid="stSidebar"]
+    input {
+        color: #111827 !important;
+        background-color: #f8fafc !important;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    .stButton > button {
+        border-radius: 10px;
+        font-weight: 800 !important;
+        color: #111827 !important;
+        background-color: #f8fafc !important;
+        border: 1px solid rgba(96, 165, 250, 0.45);
+        transition: all 0.2s ease;
+    }
+
+    .stButton > button p {
+        color: #111827 !important;
+        font-weight: 800 !important;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        border-color: #60a5fa;
+        box-shadow:
+            0 6px 18px rgba(59, 130, 246, 0.25);
+    }
+
+
+    /* =====================================================
+       DATAFRAME / BENCHMARK TABLE
+       ===================================================== */
+
+    [data-testid="stDataFrame"] {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    [data-testid="stDataFrame"] * {
+        color: #111827 !important;
+    }
+
+    [data-testid="stDataFrame"] th {
+        color: #111827 !important;
+        font-weight: 800 !important;
+    }
+
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    table {
+        color: #111827 !important;
+    }
+
+    thead th {
+        color: #111827 !important;
+        font-weight: 800 !important;
+    }
+
+    tbody td {
+        color: #111827 !important;
+    }
+
+
+    /* =====================================================
+       SECTION SPACING
+       ===================================================== */
+
+    hr {
+        border-color: rgba(148, 163, 184, 0.12);
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+# =========================================================
+# HEADER
+# =========================================================
+
+st.markdown(
+    """
+    <div class="main-title">
+        🅿️ Smart Parking
+    </div>
+
+    <div class="main-subtitle">
+        Intelligent Space Allocation & Management System
+    </div>
+
+    <div class="system-status">
+        <span class="status-dot"></span>
+        SYSTEM ONLINE
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.write("Algorithm-based parking slot allocation using Python.")
 
-st.sidebar.header("Parking Configuration")
+
+# =========================================================
+# SIDEBAR
+# =========================================================
+
+st.sidebar.header("🚗 Parking Configuration")
 
 
-# ---------------------------------------------------------
+# =========================================================
 # PARKING CONFIGURATION
-# ---------------------------------------------------------
+# =========================================================
 
 algorithm = st.sidebar.selectbox(
     "Select Algorithm",
@@ -196,15 +516,14 @@ required_slots = st.sidebar.number_input(
 )
 
 
-# ---------------------------------------------------------
+# =========================================================
 # VEHICLE CONFIGURATION
-# ---------------------------------------------------------
+# =========================================================
 
 vehicle_configs = []
 
 
 if required_slots == 1:
-    # Original single-vehicle functionality
     vehicle_number = st.sidebar.text_input(
         "Vehicle Number",
         value="AP39AB1234",
@@ -233,10 +552,6 @@ if required_slots == 1:
     )
 
 else:
-    # -----------------------------------------------------
-    # MULTI-VEHICLE CONFIGURATION
-    # -----------------------------------------------------
-
     st.sidebar.subheader("🚗 Vehicle Details")
 
     for index in range(required_slots):
@@ -274,9 +589,9 @@ else:
         )
 
 
-# ---------------------------------------------------------
+# =========================================================
 # SESSION STATE
-# ---------------------------------------------------------
+# =========================================================
 
 if "parking_lot" not in st.session_state:
     st.session_state.parking_lot = create_lot()
@@ -291,9 +606,9 @@ if "selected_slots" not in st.session_state:
 lot = st.session_state.parking_lot
 
 
-# ---------------------------------------------------------
+# =========================================================
 # LIVE PARKING STATISTICS
-# ---------------------------------------------------------
+# =========================================================
 
 total_slots = lot.total_slots()
 available_slots = lot.available_count()
@@ -301,18 +616,32 @@ occupied_slots = total_slots - available_slots
 
 occupancy_percentage = (occupied_slots / total_slots) * 100 if total_slots > 0 else 0
 
+
 st.subheader("📊 Parking Statistics")
 
 col1, col2, col3, col4 = st.columns(4)
 
+
 with col1:
-    st.metric("TOTAL SLOTS", total_slots)
+    st.metric(
+        "TOTAL SLOTS",
+        total_slots,
+    )
+
 
 with col2:
-    st.metric("AVAILABLE", available_slots)
+    st.metric(
+        "AVAILABLE",
+        available_slots,
+    )
+
 
 with col3:
-    st.metric("OCCUPIED", occupied_slots)
+    st.metric(
+        "OCCUPIED",
+        occupied_slots,
+    )
+
 
 with col4:
     st.metric(
@@ -321,9 +650,9 @@ with col4:
     )
 
 
-# ---------------------------------------------------------
+# =========================================================
 # ALLOCATE PARKING
-# ---------------------------------------------------------
+# =========================================================
 
 if st.button("Allocate Parking Slot"):
     allocated_slots = []
@@ -354,7 +683,6 @@ if st.button("Allocate Parking Slot"):
             requires_ev_charging,
         )
 
-        # No suitable slot for this vehicle
         if selected_slot is None:
             allocation_failed = True
 
@@ -367,7 +695,7 @@ if st.button("Allocate Parking Slot"):
             break
 
         # -------------------------------------------------
-        # Occupy selected slot
+        # OCCUPY SELECTED SLOT
         # -------------------------------------------------
 
         if selected_slot.is_available():
@@ -386,7 +714,7 @@ if st.button("Allocate Parking Slot"):
         )
 
     # -----------------------------------------------------
-    # ROLLBACK IF ANY VEHICLE FAILED
+    # ROLLBACK IF ALLOCATION FAILED
     # -----------------------------------------------------
 
     if allocation_failed:
@@ -402,7 +730,6 @@ if st.button("Allocate Parking Slot"):
     else:
         st.session_state.selected_slots = allocated_slots
 
-        # Store every vehicle separately.
         for details in allocation_details:
             vehicle_number = details["vehicle_number"]
             slot = details["slot"]
@@ -415,7 +742,7 @@ if st.button("Allocate Parking Slot"):
         # ALLOCATED SLOTS
         # -------------------------------------------------
 
-        st.subheader("Allocated Slots")
+        st.subheader("🎯 Allocated Slots")
 
         for details in allocation_details:
             vehicle_number = details["vehicle_number"]
@@ -446,50 +773,45 @@ if st.button("Allocate Parking Slot"):
         # WHY THESE SLOTS?
         # -------------------------------------------------
 
+        st.subheader("💡 Why These Slots?")
+
         if algorithm == "Greedy":
             st.write(
-                "💡 **Why these slots?** "
                 "The Greedy algorithm selected the "
                 "nearest suitable slot for each vehicle."
             )
 
         elif algorithm == "Divide & Conquer":
             st.write(
-                "💡 **Why these slots?** "
                 "The Divide & Conquer algorithm divided "
                 "the suitable slots into smaller sections "
-                "and selected the nearest suitable slot "
-                "for each vehicle."
+                "and selected the nearest suitable slot."
             )
 
         elif algorithm == "Dynamic Programming":
             st.write(
-                "💡 **Why these slots?** "
-                "Dynamic Programming selected the suitable "
-                "slot that minimizes the distance for each "
-                "vehicle."
+                "Dynamic Programming evaluated suitable "
+                "slot choices and selected the minimum-"
+                "distance allocation."
             )
 
         elif algorithm == "Backtracking":
             st.write(
-                "💡 **Why these slots?** "
                 "Backtracking explored valid slot choices "
-                "for each vehicle and selected a suitable "
-                "minimum-distance slot."
+                "and selected a minimum-distance solution."
             )
 
         elif algorithm == "Branch & Bound":
             st.write(
-                "💡 **Why these slots?** "
                 "Branch & Bound searched possible slot "
                 "choices and pruned branches that could "
                 "not improve the solution."
             )
 
 
-# ---------------------------------------------------------
+# =========================================================
 # RELEASE VEHICLE
-# ---------------------------------------------------------
+# =========================================================
 
 st.subheader("🚪 Release Vehicle")
 
@@ -498,17 +820,15 @@ release_vehicle = st.text_input(
     key="release_vehicle",
 )
 
+
 if st.button("Release Vehicle"):
     if release_vehicle in st.session_state.parked_vehicles:
-        # Get ALL slots assigned to this vehicle.
         slot_ids = st.session_state.parked_vehicles.pop(release_vehicle)
 
-        # Release every slot.
         for slot in lot.slots:
             if slot.slot_id in slot_ids:
                 slot.release()
 
-        # Remove released slots from session state.
         st.session_state.selected_slots = [
             slot
             for slot in st.session_state.selected_slots
@@ -521,9 +841,9 @@ if st.button("Release Vehicle"):
         st.error("Vehicle not found in the parking lot.")
 
 
-# ---------------------------------------------------------
+# =========================================================
 # PARKING LOT DISPLAY
-# ---------------------------------------------------------
+# =========================================================
 
 st.divider()
 
@@ -533,48 +853,37 @@ st.write("🚪 Entrance")
 
 columns = st.columns(3)
 
+
 for index, slot in enumerate(lot.slots):
     with columns[index % 3]:
-        if slot.is_available():
-            status = "🟢 AVAILABLE"
-        else:
-            status = "🔴 OCCUPIED"
+        with st.container(border=True, height=260):
+            st.markdown(f"### 🅿️ {slot.slot_id}")
 
-        features = []
+            if slot.is_available():
+                st.success("🟢 AVAILABLE")
 
-        if slot.priority:
-            features.append("⭐ Priority")
+            else:
+                st.error("🔴 OCCUPIED")
 
-        if slot.ev_charging:
-            features.append("⚡ EV Charging")
+            st.write(f"🚗 **Type:** {slot.vehicle_type}")
 
-        feature_text = " | ".join(features) if features else "Standard Slot"
+            st.write(f"📏 **Distance:** {slot.distance_from_entrance} m")
 
-        st.markdown(
-            f"""
-            ### 🅿️ {slot.slot_id}
+            if slot.ev_charging:
+                st.write("⚡ **EV Charging Available**")
 
-            **{status}**
-
-            🚗 Type: {slot.vehicle_type}
-
-            📏 {slot.distance_from_entrance} m
-
-            🔧 {feature_text}
-            """
-        )
+            if slot.priority:
+                st.write("⭐ **Priority Slot**")
 
 
 st.caption("🟢 Available   🔴 Occupied   ⭐ Priority   ⚡ EV Charging")
 
 
-# ---------------------------------------------------------
+# =========================================================
 # ALGORITHM PERFORMANCE COMPARISON
-# ---------------------------------------------------------
+# =========================================================
 
-# ---------------------------------------------------------
-# ALGORITHM PERFORMANCE COMPARISON
-# ---------------------------------------------------------
+st.divider()
 
 st.subheader("⚡ Algorithm Performance Comparison")
 
@@ -603,47 +912,63 @@ try:
             }
         )
 
+    # -----------------------------------------------------
+    # BENCHMARK TABLE
+    # -----------------------------------------------------
+
     st.dataframe(
         display_rows,
         width="stretch",
         hide_index=True,
     )
 
-    st.markdown("### 📊 Average Execution Time")
+    # -----------------------------------------------------
+    # EXECUTION TIME TREND
+    # -----------------------------------------------------
 
-    algorithms = [
-        "greedy",
-        "divide_conquer",
-        "dynamic_programming",
-        "backtracking",
-        "branch_and_bound",
-    ]
+    st.markdown("### 📈 Execution Time vs Parking Lot Size")
 
-    average_times = {}
+    st.write(
+        "This chart shows how the execution time of "
+        "each algorithm changes as the number of "
+        "parking slots increases."
+    )
 
-    for algorithm_name in algorithms:
-        values = [float(row[algorithm_name]) for row in benchmark_rows]
+    chart_data = {
+        "Parking Slots": [row["Parking Slots"] for row in display_rows],
+        "Greedy": [row["Greedy"] for row in display_rows],
+        "Divide & Conquer": [row["Divide & Conquer"] for row in display_rows],
+        "Dynamic Programming": [row["Dynamic Programming"] for row in display_rows],
+        "Backtracking": [row["Backtracking"] for row in display_rows],
+        "Branch & Bound": [row["Branch & Bound"] for row in display_rows],
+    }
 
-        average_times[algorithm_name.replace("_", " ").title()] = sum(values) / len(
-            values
-        )
-
-    st.bar_chart(
-        average_times,
+    st.line_chart(
+        chart_data,
+        x="Parking Slots",
+        y=[
+            "Greedy",
+            "Divide & Conquer",
+            "Dynamic Programming",
+            "Backtracking",
+            "Branch & Bound",
+        ],
         width="stretch",
     )
 
     st.caption(
-        "Average execution time across parking lot sizes of 5, 10, 15, 20 and 25 slots."
+        "Lower execution time indicates faster algorithm "
+        "performance. The chart compares execution time "
+        "as parking lot size increases."
     )
 
 except FileNotFoundError:
     st.warning("Benchmark results are not available. Run the benchmark first.")
 
 
-# ---------------------------------------------------------
+# =========================================================
 # FOOTER
-# ---------------------------------------------------------
+# =========================================================
 
 st.divider()
 
